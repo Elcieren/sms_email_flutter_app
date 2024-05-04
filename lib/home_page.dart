@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:url_launcher/url_launcher.dart' as launcher;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,9 +30,11 @@ class _HomePageState extends State<HomePage> {
               title: "Launch Phone Number",
               icon: Icons.phone,
               onPressed: () async {
-                Uri uri = Uri.parse('tel:+90-546-930-2444');
-                if (!await launcher.launchUrl(uri)) {
-                  debugPrint("Could not launch the uri ");
+                final Uri url = Uri(scheme: 'tel', path: '+5469302444');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url);
+                } else {
+                  print('hata');
                 }
               },
             ),
@@ -39,14 +42,13 @@ class _HomePageState extends State<HomePage> {
                 title: "Launch Website / URL ",
                 icon: Icons.language,
                 onPressed: () {
-                  launcher.launchUrl(
-                      Uri.parse('https://www.instagram.com/erenelci94/'),
-                      mode: launcher.LaunchMode.externalApplication);
+                  launchUrl(Uri.parse('https://www.instagram.com/erenelci94/'),
+                      mode: LaunchMode.externalApplication);
                 }),
             launchButton(
               title: "Launch Sms / Message",
               icon: Icons.message,
-              onPressed: () => launcher.launchUrl(
+              onPressed: () => launchUrl(
                 Uri.parse(
                   'sms:43243243242${Platform.isAndroid ? '?' : '&'}body=Anlık Konumunuz${konum}',
                 ),
